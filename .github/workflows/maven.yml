@@ -58,3 +58,50 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'allure-report'
+      - name: Prepare Test Results Summary
+        id: test-results
+        run: |
+          # Парсим результаты тестов
+          TOTAL_TESTS=$(find target/allure-results -name "*-result.json" | wc -l | tr -d ' ')
+          PASSED_TESTS=$(grep -r '"status":"passed"' target/allure-results | wc -l | tr -d ' ')
+          FAILED_TESTS=$(grep -r '"status":"failed"' target/allure-results | wc -l | tr -d ' ')
+          BROKEN_TESTS=$(grep -r '"status":"broken"' target/allure-results | wc -l | tr -d ' ')
+          
+          echo "total=$TOTAL_TESTS" >> $GITHUB_OUTPUT
+          echo "passed=$PASSED_TESTS" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED_TESTS" >> $GITHUB_OUTPUT
+          echo "broken=$BROKEN_TESTS" >> $GITHUB_OUTPUT
+          
+          # Формируем сообщение
+          if [ $FAILED_TESTS -gt 0 ] || [ $BROKEN_TESTS -gt 0 ]; then
+          echo "status=FAILED" >> $GITHUB_OUTPUT
+          echo "emoji=❌" >> $GITHUB_OUTPUT
+          else
+          echo "status=PASSED" >> $GITHUB_OUTPUT
+          echo "emoji=✅" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Email Notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "${{ steps.test-results.outputs.emoji }} Test Results: ${{ steps.test-results.outputs.status }} - ${{ github.repository }}"
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: GitHub Actions <${{ secrets.EMAIL_USERNAME }}>
+          body: |
+            Результаты выполнения автотестов:
+            
+            📊 Статус: ${{ steps.test-results.outputs.status }} ${{ steps.test-results.outputs.emoji }}
+            📈 Всего тестов: ${{ steps.test-results.outputs.total }}
+            ✅ Успешных: ${{ steps.test-results.outputs.passed }}
+            ❌ Упавших: ${{ steps.test-results.outputs.failed }}
+            ⚠️ Сломанных: ${{ steps.test-results.outputs.broken }}
+            
+            🔗 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            🏷️ Коммит: ${{ github.sha }}
+            🎯 Ветка: ${{ github.ref }}
+            
+            Allure отчет будет доступен после завершения workflow.
