@@ -49,13 +49,13 @@ jobs:
         run: |
           mkdir -p allure-report  
           echo "=== Report generated at ==="
-          allure generate --clean allure-results -o allure-report
+          allure generate --clean target/allure-results -o allure-report
 
       - name: List Allure Report Files Before Upload
         run: ls -R allure-report
 
       - name: Upload Allure Report as artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: 'allure-report'
       - name: Prepare Test Results Summary
