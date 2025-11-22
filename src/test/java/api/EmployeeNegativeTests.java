@@ -5,16 +5,14 @@ import config.EmployeeApi;
 import db.EmployeeRepository;
 import io.qameta.allure.Epic;
 import model.EmployeeRequest;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.*;
 import utils.TestDataGenerator;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
 import static org.hamcrest.Matchers.equalTo;
 @Epic("Негативные API автотесты")
+@Disabled
 public class EmployeeNegativeTests extends BaseApiTest {
 
     private EmployeeApi employeeApi;

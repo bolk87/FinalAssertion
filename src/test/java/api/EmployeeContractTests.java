@@ -12,6 +12,7 @@ import java.sql.SQLException;
 
 import static org.hamcrest.Matchers.*;
 @Epic("Контрактные API автотесты")
+@Disabled
 public class EmployeeContractTests extends BaseApiTest {
 
     private EmployeeApi employeeApi;

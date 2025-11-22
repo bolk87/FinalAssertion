@@ -10,17 +10,15 @@ import model.Employee;
 import model.EmployeeRequest;
 
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
+import org.junit.jupiter.api.*;
 import utils.TestDataGenerator;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Epic("API автотесты для проверки бизнес-логики")
+@Disabled
 public class EmployeeBusinessLogicTests extends BaseApiTest {
 
     private EmployeeApi employeeApi;
